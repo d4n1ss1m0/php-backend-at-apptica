@@ -1,0 +1,15 @@
+# Laravel
+laravel/vendor/
+laravel/node_modules/
+laravel/.env
+laravel/storage/*.key
+laravel/storage/debugbar/*
+laravel/public/hot
+laravel/public/storage
+
+# Docker
+pgdata/
+*.log
+
+# IDE
+*.idea/
