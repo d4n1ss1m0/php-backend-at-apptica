@@ -1,20 +1,24 @@
-version: '3.9'
-
 services:
   app:
-    build: .
+    build:
+      context: .
+      dockerfile: Dockerfile
     container_name: laravel_app
+    restart: unless-stopped
+    working_dir: /var/www/html
+    user: "${UID}:${GID}"
     volumes:
       - ./laravel:/var/www/html
-    user: "${UID}:${GID}"
     depends_on:
       - db
+      - redis
     networks:
       - laravel
 
   web:
-    image: nginx:stable
+    image: nginx:stable-alpine
     container_name: laravel_web
+    restart: unless-stopped
     ports:
       - "8000:80"
     volumes:
@@ -26,22 +30,55 @@ services:
       - laravel
 
   db:
-    image: postgres:15
+    image: postgres:15-alpine
     container_name: laravel_db
-    restart: always
+    restart: unless-stopped
     environment:
-      POSTGRES_USER: laravel
-      POSTGRES_PASSWORD: secret
-      POSTGRES_DB: laravel
+      POSTGRES_DB: ${DB_DATABASE}
+      POSTGRES_USER: ${DB_USERNAME}
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
     volumes:
       - pgdata:/var/lib/postgresql/data
     ports:
-      - "5432:5432"
+      - "${DB_PORT}:5432"
+    networks:
+      - laravel
+
+  redis:
+    image: redis:7-alpine
+    container_name: laravel_redis
+    restart: unless-stopped
+    ports:
+      - "6379:6379"
+    volumes:
+      - redisdata:/data
+    networks:
+      - laravel
+
+  elastic:
+    image: elasticsearch:8.10.2
+    container_name: laravel_elastic
+    restart: unless-stopped
+    environment:
+      - discovery.type=single-node
+      - xpack.security.enabled=false
+      - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
+    ports:
+      - "9200:9200"
+      - "9300:9300"
+    volumes:
+      - esdata:/usr/share/elasticsearch/data
     networks:
       - laravel
 
 networks:
   laravel:
+    driver: bridge
 
 volumes:
   pgdata:
+    driver: local
+  redisdata:
+    driver: local
+  esdata:
+    driver: local

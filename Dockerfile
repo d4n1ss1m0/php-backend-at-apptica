@@ -1,18 +1,41 @@
+
 FROM php:8.3-fpm
 
-# Установка системных пакетов и расширений
 RUN apt-get update && apt-get install -y \
-    libpq-dev \
-    unzip \
     git \
     curl \
-    && docker-php-ext-install pdo pdo_pgsql
+    unzip \
+    zip \
+    libzip-dev \
+    libpq-dev \
+    libpng-dev \
+    libjpeg62-turbo-dev \
+    libfreetype6-dev \
+    nodejs \
+    npm \
+    && rm -rf /var/lib/apt/lists/*
 
-# Установка Composer
-COPY --from=composer:2 /usr/bin/composer /usr/bin/composer
+RUN docker-php-ext-configure gd --with-freetype --with-jpeg \
+    && docker-php-ext-install -j$(nproc) gd \
+    && docker-php-ext-install pdo pdo_pgsql zip
 
-# Рабочая директория
+COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
+
 WORKDIR /var/www/html
 
-# Установка прав
-RUN chown -R www-data:www-data /var/www/html
+COPY laravel/composer.json laravel/composer.lock ./
+
+RUN composer install --no-interaction --no-plugins --no-scripts --prefer-dist
+
+COPY laravel/ /var/www/html/
+
+RUN composer install --no-interaction --no-dev
+
+RUN chown -R www-data:www-data storage bootstrap/cache \
+    && chmod -R 775 storage bootstrap/cache
+
+USER www-data
+
+EXPOSE 9000
+
+CMD ["php-fpm"]
