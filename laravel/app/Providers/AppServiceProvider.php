@@ -2,6 +2,8 @@
 
 namespace App\Providers;
 
+use App\Services\ApplicationPositionApiService\ApplicationPositionApiService;
+use App\Services\ApplicationPositionApiService\ApplicationPositionApiServiceInterface;
 use Illuminate\Support\ServiceProvider;
 
 class AppServiceProvider extends ServiceProvider
@@ -11,7 +13,7 @@ class AppServiceProvider extends ServiceProvider
      */
     public function register(): void
     {
-        //
+        $this->app->bind(ApplicationPositionApiServiceInterface::class, ApplicationPositionApiService::class);
     }
 
     /**
