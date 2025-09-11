@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Laravel\Scout\Searchable;
 
 class ApplicationTopCategoryPosition extends Model
 {
@@ -13,4 +14,5 @@ class ApplicationTopCategoryPosition extends Model
     {
         return $this->belongsTo(Application::class, 'application_id', 'id');
     }
+
 }
