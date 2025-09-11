@@ -59,6 +59,6 @@ class FetchApplicationTopCategoryCommand extends Command
             }
         }
 
-        ApplicationTopCategoryPosition::query()->upsert($insertData, ['date', 'category_id'], ['position']);
+        ApplicationTopCategoryPosition::query()->upsert($insertData, ['application_id', 'country_id', 'category_id', 'date'], ['position']);
     }
 }

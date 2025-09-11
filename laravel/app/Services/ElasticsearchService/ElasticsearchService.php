@@ -21,21 +21,35 @@ class ElasticsearchService implements ElasticsearchServiceInterface
                 'headers' => ['Content-Type' => 'application/x-ndjson'],
             ]);
         } else {
-            $response = $client->send($method, $url, ['json' => $data]);
+            if(empty($data)) {
+                $response = $client->send($method, $url);
+            } else {
+                $response = $client->send($method, $url, ['json' => $data]);
+            }
+
         }
 
-        return $response->json();
+        return $response;
     }
 
     public function createIndex(string $index, array $mapping)
     {
-        return $this->request('PUT', "/$index", $mapping);
+        // Проверяем, существует ли индекс
+        $existing = $this->request('GET', "/$index");
+
+        if ($existing->getStatusCode() === 200) {
+            // Если существует — удаляем
+            $this->request('DELETE', "/$index");
+        }
+
+        // Создаем индекс с новым маппингом
+        return $this->request('PUT', "/$index", $mapping)->json();
     }
 
     public function addDocument(string $index, array $data, $id = null)
     {
         $uri = $id ? "/$index/_doc/$id" : "/$index/_doc";
-        return $this->request('PUT', $uri, $data);
+        return $this->request('PUT', $uri, $data)->json();
     }
 
     public function bulkInsert(string $index, array $documents)
@@ -49,16 +63,16 @@ class ElasticsearchService implements ElasticsearchServiceInterface
         $payload = implode("\n", array_map(fn($d) => json_encode($d), $bulkData)) . "\n";
 
         // передаем NDJSON через request
-        return $this->request('POST', '/_bulk', $payload, true);
+        return $this->request('POST', '/_bulk', $payload, true)->json();
     }
 
     public function deleteDocument(string $index, $id)
     {
-        return $this->request('DELETE', "/$index/_doc/$id");
+        return $this->request('DELETE', "/$index/_doc/$id")->json();
     }
 
     public function search(string $index, array $query)
     {
-        return $this->request('GET', "/$index/_search", $query);
+        return $this->request('GET', "/$index/_search", $query)->json();
     }
 }

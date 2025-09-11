@@ -35,14 +35,7 @@ class AllApplicationTopPositionAddCommand extends Command
         $index = 'application_top_position';
         $bulkData = [];
         foreach (ApplicationTopCategoryPosition::all() as $model) {
-            $bulkData[] = [
-                'id' => $model->id,
-                'applicationId' => $model->application_id,
-                'countryId' => $model->country_id,
-                'categoryId' => $model->category_id,
-                'position' => $model->position,
-                'date' => $model->date,
-            ];
+            $bulkData[] = $model->serializeForElastic();
         }
 
 //        // Elasticsearch Bulk API
