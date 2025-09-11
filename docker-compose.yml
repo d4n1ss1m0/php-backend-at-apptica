@@ -56,18 +56,22 @@ services:
       - laravel
 
   elastic:
-    image: elasticsearch:8.10.2
+    image: elasticsearch:8.19.3
     container_name: laravel_elastic
     restart: unless-stopped
+    ports:
+      - 9200:9200
+      - 9300:9300
     environment:
       - discovery.type=single-node
-      - xpack.security.enabled=false
-      - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
-    ports:
-      - "9200:9200"
-      - "9300:9300"
+      - ELASTIC_PASSWORD=5wu4DZL
+      - xpack.security.enabled=true
     volumes:
-      - esdata:/usr/share/elasticsearch/data
+      - ./elasticsearch_data:/usr/share/elasticsearch/data
+      - ./config/elasticsearch.yml:/usr/share/elasticsearch/config/elasticsearch.yml
+      - ./plugins:/usr/share/elasticsearch/plugins
+    mem_limit: 3g
+    memswap_limit: 3g
     networks:
       - laravel
 

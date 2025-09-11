@@ -8,7 +8,6 @@ use Laravel\Scout\Searchable;
 
 class ApplicationTopCategoryPosition extends Model
 {
-    use Searchable;
     protected $guarded = ['id', 'created_at', 'updated_at'];
 
     public function application():BelongsTo
@@ -16,15 +15,4 @@ class ApplicationTopCategoryPosition extends Model
         return $this->belongsTo(Application::class, 'application_id', 'id');
     }
 
-    public function toSearchableArray(): array
-    {
-        return [
-            'id' => $this->id,
-            'applicationId' => $this->application_id,
-            'countryId' => $this->country_id,
-            'categoryId' => $this->category_id,
-            'position' => $this->position,
-            'date' => $this->date,
-        ];
-    }
 }
