@@ -10,6 +10,7 @@ use App\Services\ApplicationPositionCreateService\ApplicationPositionCreateServi
 use App\Services\ApplicationPositionSearchService\ApplicationPositionSearchServiceInterface;
 use App\Traits\HttpResponseTrait;
 use Carbon\Carbon;
+use Illuminate\Support\Facades\Log;
 
 class ApplicationPositionsSearchController extends Controller
 {
@@ -30,17 +31,21 @@ class ApplicationPositionsSearchController extends Controller
 
             //если в эластике ничего нет
             if(empty($response)) {
+                Log::warning('Positions Not Found in Elasticsearch');
                 //поскольку у нас только одно приложение, явно его ищем
                 $application = Application::query()->find(1);
                 //добавляем в бд новые записи выбранной даты
                 $response = $this->applicationPositionCreateService->addApplicationPositionsByDate($application, $date, 1);
             }
-
+            Log::info('Request success');
             return $this->success($response);
         } catch (\InvalidArgumentException $e) {
+            Log::error('Forbidden', ['exception' => $e]);
             return $this->error($e->getMessage(), 'forbidden', 402);
         }
         catch (\Exception $e) {
+            dd($e);
+            Log::error('Unexpected error', ['exception' => $e]);
             return $this->error('unexpected error');
         }
     }

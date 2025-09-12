@@ -5,6 +5,7 @@ namespace App\Http\Middleware;
 use App\Traits\HttpResponseTrait;
 use Closure;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Redis;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -33,6 +34,7 @@ class RateLimitByIp
 
         if ($current && $current >= $this->maxAttempts) {
             $ttl = Redis::ttl($key);
+            Log::error('Too many requests');
             return $this->error("Too many requests. Try again in {$ttl} seconds.", 'Too many requests.', Response::HTTP_FORBIDDEN);
         }
 
