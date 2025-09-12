@@ -15,4 +15,4 @@ pgdata/
 *.idea/
 
 # Elastic
-#elasticsearch_data
+elasticsearch_data
