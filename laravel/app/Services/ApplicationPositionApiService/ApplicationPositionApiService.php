@@ -22,6 +22,10 @@ class ApplicationPositionApiService implements ApplicationPositionApiServiceInte
             return $this->transformDataFromApi($data['data']);
         }
 
+        if($response->getStatusCode() === 402) {
+            throw new \InvalidArgumentException('Top History info is forbidden');
+        }
+
         throw new \Exception('Something went wrong');
     }
 

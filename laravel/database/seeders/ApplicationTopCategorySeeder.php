@@ -19,8 +19,10 @@ class ApplicationTopCategorySeeder extends Seeder
         $service = app()->make(ApplicationPositionApiServiceInterface::class);
 
         $country = 1;
+
+        //такой интервал нужен для того, чтобы протестировать запрос к предоставленному api при использовании поиска
         $dateFrom = Carbon::now()->subDays(30);
-        $dateTo = Carbon::now();
+        $dateTo = Carbon::now()->subDays(10);
 
         $applications = Application::all();
 
@@ -53,7 +55,7 @@ class ApplicationTopCategorySeeder extends Seeder
 
 
         try {
-            ApplicationTopCategoryPosition::query()->upsert($insertData, ['date', 'category_id'], ['position']);
+            ApplicationTopCategoryPosition::query()->upsert($insertData, ['application_id', 'country_id', 'category_id', 'date'], ['position']);
         } catch (\Exception $e) {
             dd($insertData);
         }

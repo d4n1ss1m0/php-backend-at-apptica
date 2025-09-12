@@ -21,7 +21,7 @@ return new class extends Migration
             $table->date('date');
             $table->timestamps();
 
-            $table->unique(['category_id', 'date']);
+            $table->unique(['application_id', 'country_id', 'category_id', 'date']);
         });
     }
 

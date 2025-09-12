@@ -11,7 +11,7 @@ class SearchApplicationPositionRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return false;
+        return true;
     }
 
     /**
@@ -22,7 +22,7 @@ class SearchApplicationPositionRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'date' => ['required', 'date:Y-m-d'],
+            'date' => ['required', 'date:Y-m-d', 'before_or_equal:today'],
         ];
     }
 }

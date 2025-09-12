@@ -35,14 +35,7 @@ class ApplicationTopPositionAddCommand extends Command
         $id = $this->argument('id');
         $applicationPosition = ApplicationTopCategoryPosition::find($id);
 
-        $data = [
-            'id' => $applicationPosition->id,
-            'applicationId' => $applicationPosition->application_id,
-            'countryId' => $applicationPosition->country_id,
-            'categoryId' => $applicationPosition->category_id,
-            'position' => $applicationPosition->position,
-            'date' => $applicationPosition->date,
-        ];
+        $data = $applicationPosition->serializeForElastic();
 
         $service->addDocument('application_top_position', $data, $id);
 
