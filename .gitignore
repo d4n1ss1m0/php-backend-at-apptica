@@ -13,3 +13,6 @@ pgdata/
 
 # IDE
 *.idea/
+
+# Elastic
+elasticsearch_data
