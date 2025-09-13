@@ -24,7 +24,7 @@ class ApplicationTopPositionMappingCommand extends Command
      *
      * @var string
      */
-    protected $description = 'Fetch data from api apptica';
+    protected $description = 'Mapping ApplicationTopCategoryPosition';
 
     /**
      * Execute the console command.

@@ -13,12 +13,19 @@ class ApplicationPositionSearchService implements ApplicationPositionSearchServi
 
     }
 
+    /**
+     * Getter searchParams
+     *
+     * @return array
+     */
     public function getSearchParams(): array
     {
         return $this->searchParams;
     }
 
-
+    /**
+     * @inheritDoc
+     */
     public function addDateFilter(Carbon $date)
     {
         $this->searchParams['query']['bool']['must'][] = [
@@ -28,6 +35,9 @@ class ApplicationPositionSearchService implements ApplicationPositionSearchServi
         ];
     }
 
+    /**
+     * @inheritDoc
+     */
     public function search()
     {
         $response = $this->elasticsearchService->search(env('ELASTIC_INDEX'), $this->getSearchParams());

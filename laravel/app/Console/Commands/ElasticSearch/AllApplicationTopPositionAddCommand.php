@@ -24,7 +24,7 @@ class AllApplicationTopPositionAddCommand extends Command
      *
      * @var string
      */
-    protected $description = 'Fetch data from api apptica';
+    protected $description = 'All add ApplicationTopCategoryPosition';
 
     /**
      * Execute the console command.

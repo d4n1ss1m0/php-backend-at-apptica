@@ -8,6 +8,9 @@ use Illuminate\Support\Facades\Http;
 class ApplicationPositionApiService implements ApplicationPositionApiServiceInterface
 {
 
+    /**
+     * @inheritDoc
+     */
     public function getTopPositionForApp(int $appId, int $countryId, Carbon $date): array
     {
         $url = env('APPLICATION_TOP_CATEGORY_API') . "/package/top_history/{$appId}/{$countryId}";
@@ -29,6 +32,9 @@ class ApplicationPositionApiService implements ApplicationPositionApiServiceInte
         throw new \Exception('Something went wrong');
     }
 
+    /**
+     * @inheritDoc
+     */
     public function getTopPositionForAppWithDateInterval(int $appId, int $countryId, Carbon $dateFrom, Carbon $dateTo): array
     {
         $url = env('APPLICATION_TOP_CATEGORY_API') . "/package/top_history/{$appId}/{$countryId}";
@@ -43,9 +49,19 @@ class ApplicationPositionApiService implements ApplicationPositionApiServiceInte
             return $this->transformDataFromApi($data['data']);
         }
 
+        if($response->getStatusCode() === 402) {
+            throw new \InvalidArgumentException('Top History info is forbidden');
+        }
+
         throw new \Exception('Something went wrong');
     }
 
+    /**
+     * Маппинг данных
+     *
+     * @param array $data
+     * @return array
+     */
     private function transformDataFromApi(array $data): array
     {
         $returnArray = [];

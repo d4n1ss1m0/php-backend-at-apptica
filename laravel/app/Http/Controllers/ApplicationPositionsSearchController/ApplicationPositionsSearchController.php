@@ -10,6 +10,7 @@ use App\Services\ApplicationPositionCreateService\ApplicationPositionCreateServi
 use App\Services\ApplicationPositionSearchService\ApplicationPositionSearchServiceInterface;
 use App\Traits\HttpResponseTrait;
 use Carbon\Carbon;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Log;
 
 class ApplicationPositionsSearchController extends Controller
@@ -20,6 +21,12 @@ class ApplicationPositionsSearchController extends Controller
     {
     }
 
+    /**
+     * api/appTopCategory
+     *
+     * @param SearchApplicationPositionRequest $request
+     * @return JsonResponse
+     */
     public function search(SearchApplicationPositionRequest $request)
     {
         try {
@@ -43,7 +50,7 @@ class ApplicationPositionsSearchController extends Controller
             Log::error('Forbidden', ['exception' => $e]);
             return $this->error($e->getMessage(), 'forbidden', 402);
         }
-        catch (\Exception $e) {
+        catch (\Throwable $e) {
             dd($e);
             Log::error('Unexpected error', ['exception' => $e]);
             return $this->error('unexpected error');

@@ -24,7 +24,7 @@ class ApplicationTopPositionDeleteCommand extends Command
      *
      * @var string
      */
-    protected $description = 'Fetch data from api apptica';
+    protected $description = 'Delete ApplicationTopCategoryPosition';
 
     /**
      * Execute the console command.

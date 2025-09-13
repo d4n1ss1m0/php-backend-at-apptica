@@ -15,6 +15,9 @@ class ApplicationPositionCreateService implements ApplicationPositionCreateServi
     {
     }
 
+    /**
+     * @inheritDoc
+     */
     public function addApplicationPositionsByDate(Application $application, Carbon $date, int $countryId):array
     {
         $insertData = $this->getInsertDataFromApi($application, $date, $countryId);
@@ -26,10 +29,12 @@ class ApplicationPositionCreateService implements ApplicationPositionCreateServi
             ->where('date', $date->format('Y-m-d'))
             ->get();
 
+        $data = [];
         foreach ($items as $item) {
-            $data = $item->serializeForElastic();
-            $this->elasticsearchService->addDocument('application_top_position', $data, $data['id']);
+            $data[] = $item->serializeForElastic();
         }
+
+        $this->elasticsearchService->bulkInsert('application_top_position', $data);
 
         $result = [];
 
@@ -40,7 +45,9 @@ class ApplicationPositionCreateService implements ApplicationPositionCreateServi
         return $result;
     }
 
-
+    /**
+     * @inheritDoc
+     */
     public function getInsertDataFromApi(Application $application, Carbon $searchDate, int $countryId): array
     {
         $result = $this->apiService->getTopPositionForApp(
