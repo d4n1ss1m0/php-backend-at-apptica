@@ -67,7 +67,7 @@ services:
       - ELASTIC_PASSWORD=5wu4DZL
       - xpack.security.enabled=true
     volumes:
-      - ./elasticsearch_data:/usr/share/elasticsearch/data
+      - esdata:/usr/share/elasticsearch/data
       - ./config/elasticsearch.yml:/usr/share/elasticsearch/config/elasticsearch.yml
       - ./plugins:/usr/share/elasticsearch/plugins
     mem_limit: 3g
