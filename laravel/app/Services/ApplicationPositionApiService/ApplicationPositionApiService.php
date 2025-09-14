@@ -88,8 +88,9 @@ class ApplicationPositionApiService implements ApplicationPositionApiServiceInte
             foreach ($positions as $date => $valuesPerDate) {
                 $positionsArray = array_filter($valuesPerDate, fn($v) => $v !== null);;
                 $minPosition = count($positionsArray) ? min($positionsArray) : null;
-
-                $returnArray[$date][$categoryId] = $minPosition;
+                if($minPosition !== null) {
+                    $returnArray[$date][$categoryId] = $minPosition;
+                }
             }
 
         }

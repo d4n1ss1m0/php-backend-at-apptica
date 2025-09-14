@@ -8,6 +8,7 @@ use App\Services\ApplicationPositionApiService\ApplicationPositionApiServiceInte
 use Carbon\Carbon;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Log;
 
 class FetchApplicationTopCategoryCommand extends Command
 {
@@ -30,35 +31,42 @@ class FetchApplicationTopCategoryCommand extends Command
      */
     public function handle()
     {
-        $service = app()->make(ApplicationPositionApiServiceInterface::class);
+        try {
 
-        $country = 1;
-        $date = Carbon::now();
 
-        $applications = Application::all();
+            $service = app()->make(ApplicationPositionApiServiceInterface::class);
 
-        $insertData = [];
+            $country = 1;
+            $date = Carbon::now();
 
-        foreach ($applications as $application) {
-            $result = $service->getTopPositionForApp(
-                $application->app_id,
-                $country,
-                Carbon::now()
-            );
+            $applications = Application::all();
 
-            foreach ($result as $date => $value) {
-                foreach ($value as $categoryId => $position) {
-                    $insertData[] = [
-                        'application_id' => $application->id,
-                        'country_id' => $country,
-                        'category_id' => $categoryId,
-                        'position' => $position,
-                        'date' => $date,
-                    ];
+            $insertData = [];
+
+            foreach ($applications as $application) {
+                $result = $service->getTopPositionForApp(
+                    $application->app_id,
+                    $country,
+                    Carbon::now()
+                );
+
+                foreach ($result as $date => $value) {
+                    foreach ($value as $categoryId => $position) {
+                        $insertData[] = [
+                            'application_id' => $application->id,
+                            'country_id' => $country,
+                            'category_id' => $categoryId,
+                            'position' => $position,
+                            'date' => $date,
+                        ];
+                    }
                 }
             }
-        }
 
-        ApplicationTopCategoryPosition::query()->upsert($insertData, ['application_id', 'country_id', 'category_id', 'date'], ['position']);
+            ApplicationTopCategoryPosition::query()->upsert($insertData, ['application_id', 'country_id', 'category_id', 'date'], ['position']);
+        } catch (\Exception $e) {
+            Log::error('Error in app-top-category:fetch', ['exception' => $e]);
+            throw $e;
+        }
     }
 }

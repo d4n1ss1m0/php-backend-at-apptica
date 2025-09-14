@@ -9,6 +9,7 @@ use App\Services\ElasticsearchService\ElasticsearchServiceInterface;
 use Carbon\Carbon;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Log;
 
 class ApplicationTopPositionDeleteCommand extends Command
 {
@@ -31,11 +32,16 @@ class ApplicationTopPositionDeleteCommand extends Command
      */
     public function handle()
     {
-        $service = app()->make(ElasticsearchServiceInterface::class);
-        $id = $this->argument('id');
+        try {
+            $service = app()->make(ElasticsearchServiceInterface::class);
+            $id = $this->argument('id');
 
-        $res = $service->deleteDocument('application_top_position', $id);
+            $res = $service->deleteDocument('application_top_position', $id);
 
-        $this->info(json_encode($res, JSON_PRETTY_PRINT));
+            $this->info(json_encode($res, JSON_PRETTY_PRINT));
+        } catch (\Exception $e) {
+            Log::error('Error in elasticsearch:delete_top_position', ['exception' => $e]);
+            throw $e;
+        }
     }
 }
