@@ -32,12 +32,8 @@ class FetchApplicationTopCategoryCommand extends Command
     public function handle()
     {
         try {
-
-
             $service = app()->make(ApplicationPositionApiServiceInterface::class);
-
             $country = 1;
-            $date = Carbon::now();
 
             $applications = Application::all();
 
