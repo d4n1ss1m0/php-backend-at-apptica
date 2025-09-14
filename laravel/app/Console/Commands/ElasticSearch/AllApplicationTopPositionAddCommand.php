@@ -9,6 +9,7 @@ use App\Services\ElasticsearchService\ElasticsearchServiceInterface;
 use Carbon\Carbon;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Log;
 
 class AllApplicationTopPositionAddCommand extends Command
 {
@@ -31,18 +32,24 @@ class AllApplicationTopPositionAddCommand extends Command
      */
     public function handle()
     {
-        $service = app()->make(ElasticsearchServiceInterface::class);
-        $index = 'application_top_position';
-        $bulkData = [];
-        foreach (ApplicationTopCategoryPosition::all() as $model) {
-            $bulkData[] = $model->serializeForElastic();
-        }
+        try {
+
+            $service = app()->make(ElasticsearchServiceInterface::class);
+            $index = 'application_top_position';
+            $bulkData = [];
+            foreach (ApplicationTopCategoryPosition::all() as $model) {
+                $bulkData[] = $model->serializeForElastic();
+            }
 
 //        // Elasticsearch Bulk API
 //        $payload = implode("\n", array_map(fn($d) => json_encode($d), $bulkData)) . "\n";
 //        dd($bulkData);
 
-        $service->bulkInsert($index, $bulkData);
+            $service->bulkInsert($index, $bulkData);
+        } catch (\Throwable $e) {
+            Log::error('Error in elasticsearch:all_add_top_position', ['exception' => $e]);
+            throw $e;
+        }
 
 
 

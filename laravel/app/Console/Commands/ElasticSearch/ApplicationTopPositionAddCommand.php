@@ -9,6 +9,7 @@ use App\Services\ElasticsearchService\ElasticsearchServiceInterface;
 use Carbon\Carbon;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Log;
 
 class ApplicationTopPositionAddCommand extends Command
 {
@@ -31,14 +32,20 @@ class ApplicationTopPositionAddCommand extends Command
      */
     public function handle()
     {
-        $service = app()->make(ElasticsearchServiceInterface::class);
-        $id = $this->argument('id');
-        $applicationPosition = ApplicationTopCategoryPosition::find($id);
+        try {
 
-        $data = $applicationPosition->serializeForElastic();
+            $service = app()->make(ElasticsearchServiceInterface::class);
+            $id = $this->argument('id');
+            $applicationPosition = ApplicationTopCategoryPosition::find($id);
 
-        $service->addDocument('application_top_position', $data, $id);
+            $data = $applicationPosition->serializeForElastic();
 
+            $service->addDocument('application_top_position', $data, $id);
+        }
+        catch (\Throwable $e) {
+            Log::error('Error in elasticsearch:add_top_position', ['exception' => $e]);
+            throw $e;
+        }
 
 
     }

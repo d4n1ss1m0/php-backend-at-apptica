@@ -7,8 +7,6 @@ NPM = $(DOCKER_COMPOSE) exec app npm
 install:
 	@test -f ./laravel/.env || cp ./laravel/.env.example ./laravel/.env
 	make build
-	$(DOCKER_COMPOSE) exec app composer install
-	$(ARTISAN) migrate --seed
 
 up:
 	$(DOCKER_COMPOSE) up -d
