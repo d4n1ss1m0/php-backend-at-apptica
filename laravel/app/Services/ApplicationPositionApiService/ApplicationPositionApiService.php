@@ -8,16 +8,26 @@ use Illuminate\Support\Facades\Http;
 class ApplicationPositionApiService implements ApplicationPositionApiServiceInterface
 {
 
+    private string $apiHost;
+    private string $tokenName;
+    private string $tokenValue;
+    public function __construct()
+    {
+        $this->apiHost = env('APPLICATION_TOP_CATEGORY_API');
+        $this->tokenName = env('APPLICATION_TOP_CATEGORY_TOKEN_NAME');
+        $this->tokenValue = env('APPLICATION_TOP_CATEGORY_TOKEN');
+    }
+
     /**
      * @inheritDoc
      */
     public function getTopPositionForApp(int $appId, int $countryId, Carbon $date): array
     {
-        $url = env('APPLICATION_TOP_CATEGORY_API') . "/package/top_history/{$appId}/{$countryId}";
+        $url = $this->apiHost . "/package/top_history/{$appId}/{$countryId}";
         $response = Http::get($url, [
             'date_from' => $date->format('Y-m-d'),
             'date_to' => $date->format('Y-m-d'),
-            env('APPLICATION_TOP_CATEGORY_TOKEN_NAME') => env('APPLICATION_TOP_CATEGORY_TOKEN'),
+            $this->tokenName => $this->tokenValue,
         ]);
 
         if ($response->successful()) {
@@ -37,11 +47,11 @@ class ApplicationPositionApiService implements ApplicationPositionApiServiceInte
      */
     public function getTopPositionForAppWithDateInterval(int $appId, int $countryId, Carbon $dateFrom, Carbon $dateTo): array
     {
-        $url = env('APPLICATION_TOP_CATEGORY_API') . "/package/top_history/{$appId}/{$countryId}";
+        $url = $this->apiHost . "/package/top_history/{$appId}/{$countryId}";
         $response = Http::get($url, [
             'date_from' => $dateFrom->format('Y-m-d'),
             'date_to' => $dateTo->format('Y-m-d'),
-            env('APPLICATION_TOP_CATEGORY_TOKEN_NAME') => env('APPLICATION_TOP_CATEGORY_TOKEN'),
+            $this->tokenName => $this->tokenValue,
         ]);
 
         if ($response->successful()) {

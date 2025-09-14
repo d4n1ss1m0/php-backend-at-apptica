@@ -26,6 +26,7 @@ class RateLimitByIp
      */
     public function handle(Request $request, Closure $next): Response
     {
+        //У ларавел есть встроенный рейтлимметр, но решил использовать redis
         $ip = $request->ip();
         $routeName = $request->path();
         $key = "rate_limit:{$routeName}:{$ip}";
