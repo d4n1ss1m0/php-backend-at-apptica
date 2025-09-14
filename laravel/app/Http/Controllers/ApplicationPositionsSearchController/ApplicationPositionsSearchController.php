@@ -51,7 +51,6 @@ class ApplicationPositionsSearchController extends Controller
             return $this->error($e->getMessage(), 'forbidden', 402);
         }
         catch (\Throwable $e) {
-            dd($e);
             Log::error('Unexpected error', ['exception' => $e]);
             return $this->error('unexpected error');
         }

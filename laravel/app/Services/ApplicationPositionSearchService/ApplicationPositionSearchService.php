@@ -42,6 +42,11 @@ class ApplicationPositionSearchService implements ApplicationPositionSearchServi
     {
         $response = $this->elasticsearchService->search(env('ELASTIC_INDEX'), $this->getSearchParams());
 
+
+        if(isset($response['status']) && $response['status'] == 404) {
+            throw new \Exception('Index not found');
+        }
+
         $data = $response['hits']['hits'];
         $data = array_column($data, '_source');
 
